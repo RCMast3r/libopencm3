@@ -25,7 +25,6 @@
 
           packages = with pkgs; [
             # Development Tools
-            cmake
             gnumake
             gcc-arm-embedded
             python3
