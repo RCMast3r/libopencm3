@@ -1,11 +1,10 @@
-{ stdenv, gnumake, gcc-arm-embedded, python3, rsync }:
+{ stdenv, gnumake, gcc-arm-embedded, python3 }:
 
 stdenv.mkDerivation rec {
   pname = "libopencm3";
   version = "0.1.0";
   src = ./.;
-
-  nativeBuildInputs = [ gnumake gcc-arm-embedded python3 rsync ];
+  nativeBuildInputs = [ gnumake gcc-arm-embedded python3 ];
   # TODO use this variable as the one to override for the build
   device = "";
   dontPatch = true;

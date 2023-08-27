@@ -4,32 +4,32 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
     utils.url = "github:numtide/flake-utils";
-    utils.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, ... }@inputs: inputs.utils.lib.eachSystem [
-    "x86_64-linux"
-    "i686-linux"
-    "aarch64-linux"
-    "x86_64-darwin"
-  ]
-    (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-        };
-      in
-      {
-        devShell = pkgs.mkShell rec {
-          name = "yeet";
+  outputs = { self, nixpkgs, utils, ... }:
+    {
+      overlays.default = final: prev: {
 
-          packages = with pkgs; [
-            # Development Tools
-            gnumake
-            gcc-arm-embedded
-            python3
-          ];
+        # The "correct" approach is to use final (and/or prev) to construct your package
+        # Notice that pkgs is not involved at all.
+        libopencm3 = final.callPackage ./default.nix { };
+
+      };
+
+      packages.x86_64-linux =
+        let
+
+          # So-called "legacy" packages, extended by your overlay.
+          pkgs = import nixpkgs {
+            system = "x86_64-linux";
+            overlays = [ self.overlays.default ];
+          };
+
+        in
+        {
+          # Now you can just export libopencm3 from pkgs
+          libopencm3 = pkgs.libopencm3;
         };
-        defaultPackage = pkgs.callPackage ./default.nix { };
-      });
+    };
+
 }
