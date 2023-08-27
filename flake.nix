@@ -26,9 +26,21 @@
           };
 
         in
-        {
+        rec {
           # Now you can just export libopencm3 from pkgs
           libopencm3 = pkgs.libopencm3;
+          default = libopencm3;
+
+          devShell = pkgs.mkShell rec {
+            name = "yeet";
+
+            packages = with pkgs; [
+              # Development Tools
+              gnumake
+              gcc-arm-embedded
+              python3
+            ];
+          };
         };
     };
 
